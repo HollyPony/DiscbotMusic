@@ -21,8 +21,8 @@
         // Voice channel
         client.channels.get("230706907470495746").join().then(
           function connectedToChannel(response) {
-            log.debug('connectionSuccess', response);
-            log.debug(client.voiceConnection);
+            log.debug('connectionSuccess to', response.channel.name);
+            // log.debug(client.voiceConnection);
           }
         );
       });
