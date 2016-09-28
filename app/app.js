@@ -42,6 +42,10 @@
         log.debug('voiceJoin', voiceChannel.name, user.name);
       });
 
+      client.on("voiceSwitch", (oldChannel, newChannel, user) => {
+        log.debug("voiceSwitch", oldChannel.name, newChannel.name, user.name);
+      });
+
       client.login('MjMwNjYzNTI0NTY3ODc1NTg1.Cs1UNA.oSJnw2mR1GJf1MWc8JbVpcGcd8Y');
     }
   }
