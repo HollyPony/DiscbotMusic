@@ -1,0 +1,2 @@
+# DiscbotMusic
+Musical Discord Bot
