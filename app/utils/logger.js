@@ -11,11 +11,19 @@
     }
 
     _configure(params) {
-      if (this.conf.prefix) {
-        params.splice(0, 0, this.conf.prefix);
-      }
+      let prefix = "";
+      // if (Logger._datetime) {
+        prefix += new Date().toString() + ":";
+      // }
       if (this.conf.filename) {
-        params.splice(0, 0, this.conf.filename + ":");
+        prefix += this.conf.filename + ":";
+      }
+      if (this.conf.prefix) {
+        prefix += this.conf.prefix + ":";
+      }
+
+      if (prefix.length > 0) {
+        params.splice(0, 0, prefix);
       }
     }
 

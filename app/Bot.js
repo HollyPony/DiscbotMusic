@@ -10,8 +10,10 @@
     constructor(config){
       this.conf = config;
 
+      log.prefix(config.botName);
+
       client.on("ready", function() {
-        log.debug("Bot \"" + config.botName + "\" started");
+        log.debug("Started");
         client.user.setUsername(config.botName);
 
         let musicChannel = client.channels.find(channel => channel.name === config.channelStream && channel.type === "voice");
