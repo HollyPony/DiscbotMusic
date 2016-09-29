@@ -8,7 +8,12 @@
 
   let config = {};
 
-  config.discordToken = jsonConf && jsonConf.discordToken || process.env.DBM_DISCORD_BOT_TOKEN || "";
+  config.botName = jsonConf && jsonConf.botName || "DiscordbotMusic";
+  config.botPrefix = jsonConf && jsonConf.botPrefix;
+  config.channelStream = jsonConf && jsonConf.channelStream;
+  config.channelAdmin = jsonConf && jsonConf.channelAdmin;
+  config.channelBlindTest = jsonConf && jsonConf.channelBlindTest;
+  config.discordToken = jsonConf && jsonConf.discordToken;
 
   module.exports = config;
 })();
