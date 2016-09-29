@@ -1,13 +1,9 @@
-/**
- * Created by aagombart on 9/28/16.
- */
 (function() {
   "use strict";
 
   const git = require('git-rev');
 
-  const log = require('./app/utils/logger');
-
+  const log = new (require('./app/utils/logger'))("run.js");
   const app = require('./app/app');
 
   // Init
@@ -16,8 +12,6 @@
   git.tag(function(str) {
     log.debug("App version:", str);
   });
-
-  log.prefix("-->");
 
   new app().run();
 

@@ -4,7 +4,7 @@
   const Discord = require("discord.js");
   const client = new Discord.Client();
 
-  const log = require('./utils/logger');
+  const log = new (require("./utils/logger.js"))("app.js");
 
   let config = require('./config');
 

@@ -1,24 +1,22 @@
-/**
- * Created by aagombart on 9/28/16.
- */
-
 (function() {
   "use strict";
 
   class Logger {
 
-    constructor() {
+    constructor(filename) {
       this.conf = {
+        filename: filename,
         prefix: undefined
       };
     }
 
     _configure(params) {
-      // console.log('conf', this.conf);
       if (this.conf.prefix) {
         params.splice(0, 0, this.conf.prefix);
       }
-      // return params;
+      if (this.conf.filename) {
+        params.splice(0, 0, this.conf.filename + ":");
+      }
     }
 
     prefix(prefix) {
@@ -56,5 +54,5 @@
     }
   }
 
-    module.exports = new Logger;
+  module.exports = Logger;
 })();
