@@ -4,15 +4,14 @@
   const Discord = require("discord.js");
   const client = new Discord.Client();
 
-  const log = new (require("./utils/logger"))("app.js");
+  const log = new (require("./utils/logger"))("Bot.js");
 
   class Bot {
     constructor(config){
       this.conf = config;
 
       client.on("ready", function() {
-        log.debug("Discord.js v", Discord.version);
-
+        log.debug("Bot \"" + config.botName + "\" started");
         client.user.setUsername(config.botName);
 
         let musicChannel = client.channels.find(channel => channel.name === config.channelStream && channel.type === "voice");
