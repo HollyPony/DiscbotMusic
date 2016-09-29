@@ -13,12 +13,9 @@
 
     run() {
       client.on('ready', function() {
-        log.debug('Client ready');
         log.debug('Discord.js v', Discord.version);
 
-        log.debug('ChannelList', client.channels.map(function(channel) {
-          return { id: channel.id, name: channel.name, type: channel.type };
-        }));
+        client.user.setUsername(config.botName);
 
         // Voice channel
         client.channels.get("230706907470495746").join().then(
