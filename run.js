@@ -1,18 +1,13 @@
 (function() {
   "use strict";
 
-  const git = require("git-rev");
-
+  const pckg = require("./package.json");
   const log = new (require("./app/utils/logger"))("run.js");
   const app = require("./app/app");
 
   // Init
+  log.debug("App version:", pckg.version);
   log.debug("Node version:", process.versions.node);
 
-  git.tag(function(str) {
-    log.debug("App version:", str);
-  });
-
-  new app().run();
-
+  app();
 })();
