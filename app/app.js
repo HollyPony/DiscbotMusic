@@ -1,17 +1,30 @@
 (function() {
   "use strict";
 
-  const Bot = require("./bot");
+  const fs = require("fs");
+  const Discord = require("discord.js");
 
-  let config = require("./config");
+  const log = new (require("./utils/logger"))("app.js");
+  const Bot = require("./Bot");
 
-  class App {
-    constructor() {}
+  let getBotConfFiles = function() {
+    let botConfs = [];
+    let files = fs.readdirSync("bots");
+    files.forEach(function(file) {
+      if (file.endsWith(".json")) {
+        botConfs.push(file);
+      }
+    });
+    return botConfs;
+  };
 
-    run() {
-      new Bot(config).start();
-    }
-  }
+  let run = function () {
+    log.info("Use discord.js v" + Discord.version);
+    getBotConfFiles().forEach(function(botConfigFile) {
+      log.debug("load conf:", botConfigFile);
+      new Bot(require("../bots/" + botConfigFile)).start();
+    });
+  };
 
-  module.exports = App;
+  module.exports = run;
 })();
