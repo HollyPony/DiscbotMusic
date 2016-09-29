@@ -21,7 +21,7 @@
         // Voice channel
         musicChannel.join().then(
           function connectedToChannel(response) {
-            log.debug("Connected on channel", response.channel.name);
+            log.debug("Connected on channel", "\"" + response.channel.name + "\"");
 
             const dispatcher = response.playFile("/home/liomka/music/japan.mp3");
 
