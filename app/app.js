@@ -23,6 +23,18 @@
           function connectedToChannel(response) {
             log.debug('connectionSuccess to', response.channel.name);
             // log.debug(client.voiceConnection);
+            response.playFile("/home/liomka/music/japan.mp3",
+              {
+                seek: 0,
+                volume: 1
+              },
+              function(response) {
+                log.debug("playback started", response);
+              },
+              function() {
+                log.debug("playback failed");
+              }
+            );
           }
         );
       });
@@ -38,12 +50,10 @@
         }
       });
 
-      client.on("voiceJoin", (voiceChannel, user) => {
-        log.debug('voiceJoin', voiceChannel.name, user.name);
-      });
-
-      client.on("voiceSwitch", (oldChannel, newChannel, user) => {
-        log.debug("voiceSwitch", oldChannel.name, newChannel.name, user.name);
+      client.on("voiceStateUpdate", (oldMemeber, newMember) => {
+        if (newMember.user.id === client.user.id && newMember.mute) {
+          newMember.setMute(false);
+        }
       });
 
       client.login('MjMwNjYzNTI0NTY3ODc1NTg1.Cs1UNA.oSJnw2mR1GJf1MWc8JbVpcGcd8Y');
