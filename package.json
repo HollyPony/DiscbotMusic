@@ -1,6 +1,11 @@
 {
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liomka/DiscbotMusic.git"
+  },
+  "license": "MIT",
   "dependencies": {
-    "discord.js": "^9.3.0",
-    "git-rev": "^0.2.1"
+    "discord.js": "^9.3.0"
   }
 }
