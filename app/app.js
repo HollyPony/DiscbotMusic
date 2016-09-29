@@ -17,8 +17,10 @@
 
         client.user.setUsername(config.botName);
 
+        let musicChannel = client.channels.find(channel => channel.name === config.channelStream && channel.type === "voice");
+
         // Voice channel
-        client.channels.get("230706907470495746").join().then(
+        musicChannel.join().then(
           function connectedToChannel(response) {
             log.debug('connectionSuccess to', response.channel.name);
             // log.debug(client.voiceConnection);
