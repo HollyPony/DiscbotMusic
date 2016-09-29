@@ -6,6 +6,8 @@
 
   const log = require('./utils/logger');
 
+  let config = require('./config');
+
   class App {
     constructor() {}
 
@@ -56,7 +58,7 @@
         }
       });
 
-      client.login('MjMwNjYzNTI0NTY3ODc1NTg1.Cs1UNA.oSJnw2mR1GJf1MWc8JbVpcGcd8Y');
+      client.login(config.discordToken);
     }
   }
 
