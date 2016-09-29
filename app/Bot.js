@@ -7,7 +7,8 @@
   const log = new (require("./utils/logger"))("Bot.js");
 
   class Bot {
-    constructor(config){
+    constructor(config) {
+      let vm = this;
       this.conf = config;
 
       log.prefix(config.botName);
@@ -16,36 +17,13 @@
         log.debug("Started");
         client.user.setUsername(config.botName);
 
-        let musicChannel = client.channels.find(channel => channel.name === config.channelStream && channel.type === "voice");
-
-        // Voice channel
-        musicChannel.join().then(
-          function connectedToChannel(response) {
-            log.debug("Connected on channel", "\"" + response.channel.name + "\"");
-
-            const dispatcher = response.playFile("/home/liomka/music/japan.mp3");
-
-            dispatcher.on("start", function() {
-              log.debug("Start playing");
-            });
-
-            dispatcher.on("end", function() {
-              log.debug("End playing");
-            });
-          }
-        );
+        let musicChannel = client.channels.find(function(channel) {
+          return channel.name === config.channelStream && channel.type === "voice"
+        });
+        musicChannel.join().then(vm.channelStreamJoined);
       });
 
-      client.on("message", message => {
-        if (client.user.id === message.author.id) return;
-
-        if (message.content === "Hello") {
-          message.channel.sendMessage("Hello !");
-        }
-        if (message.content === "ping") {
-          message.reply("pong");
-        }
-      });
+      client.on("message", vm.onMessage);
 
       client.on("voiceStateUpdate", (oldMemeber, newMember) => {
         if (newMember.user.id === client.user.id && newMember.mute) {
@@ -60,6 +38,33 @@
 
     stop() {
       return client.destroy();
+    }
+
+    onMessage(message) {
+      if (client.user.id === message.author.id) return;
+
+      if (message.content === "Hello") {
+        message.channel.sendMessage("Hello !");
+      }
+      if (message.content === "ping") {
+        message.reply("pong");
+      }
+    }
+
+    channelStreamJoined(voiceConnection) {
+      log.debug("Connected on channel", "\"" + voiceConnection.channel.name + "\"");
+
+      const dispatcher = voiceConnection.playFile("/home/liomka/music/japan.mp3");
+
+      dispatcher.on("start", function() {
+        log.debug("Start playing");
+        client.user.speaking = true;
+      });
+
+      dispatcher.on("end", function() {
+        log.debug("End playing");
+        client.user.speaking = false;
+      });
     }
   }
 
