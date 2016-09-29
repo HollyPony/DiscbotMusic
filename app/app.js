@@ -21,7 +21,7 @@
   let run = function () {
     log.info("Use discord.js v" + Discord.version);
     getBotConfFiles().forEach(function(botConfigFile) {
-      log.debug("load conf:", botConfigFile);
+      log.debug("Load conf:", botConfigFile);
       new Bot(require("../bots/" + botConfigFile)).start();
     });
   };

@@ -21,20 +21,17 @@
         // Voice channel
         musicChannel.join().then(
           function connectedToChannel(response) {
-            log.debug("connectionSuccess to", response.channel.name);
-            // log.debug(client.voiceConnection);
-            response.playFile("/home/liomka/music/japan.mp3",
-              {
-                seek: 0,
-                volume: 1
-              },
-              function(response) {
-                log.debug("playback started", response);
-              },
-              function() {
-                log.debug("playback failed");
-              }
-            );
+            log.debug("Connected on channel", response.channel.name);
+
+            const dispatcher = response.playFile("/home/liomka/music/japan.mp3");
+
+            dispatcher.on("start", function() {
+              log.debug("Start playing");
+            });
+
+            dispatcher.on("end", function() {
+              log.debug("End playing");
+            });
           }
         );
       });
