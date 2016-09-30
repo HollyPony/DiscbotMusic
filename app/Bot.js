@@ -10,7 +10,9 @@
   class Bot {
     constructor(config) {
       let vm = this;
+
       this.config = config;
+      this.streamDispather = undefined;
       this.voiceBot = undefined;
 
       log.prefix(config.botName);
@@ -29,18 +31,19 @@
     }
 
     playYoutube(url) {
-      log.debug(url);
-
       try {
         let stream = ytdl(url);
 
         // TODO: Add error if not connected to a voice Channel
         if (this.voiceBot) {
-          this.voiceBot.playStream(stream);Fix this context
+          this.voiceBot.playStream(stream);
         }
       } catch(e){ throw e; }
     }
 
+    // ----------------------------------------------------------------------------------------------------------------
+    // EVENTS
+    // ----------------------------------------------------------------------------------------------------------------
     onReady(config) {
       log.debug("Started");
       client.user.setUsername(config.botName);
@@ -55,6 +58,8 @@
 
     onMessage(message) {
       if (client.user.id === message.author.id) return;
+
+      if (message.content.startsWith(""))
 
       if (message.content.startsWith("yt")) {
         this.playYoutube(message.content.split(" ")[1]);
@@ -77,18 +82,6 @@
     channelStreamJoined(voiceConnection) {
       this.voiceBot = voiceConnection;
       log.debug("Connected on channel", "\"" + voiceConnection.channel.name + "\"");
-
-      // const dispatcher = voiceConnection.playFile("/home/liomka/music/japan.mp3");
-      //
-      // dispatcher.on("start", function() {
-      //   log.debug("Start playing");
-      //   client.user.speaking = true;
-      // });
-      //
-      // dispatcher.on("end", function() {
-      //   log.debug("End playing");
-      //   client.user.speaking = false;
-      // });
     }
   }
 
