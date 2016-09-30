@@ -30,12 +30,15 @@
 
     playYoutube(url) {
       log.debug(url);
-      let stream = ytdl(url);
 
-      // TODO: Add error if not connected to a voice Channel
-      if (this.voiceBot) {
-        this.voiceBot.playStream(stream);
-      }
+      try {
+        let stream = ytdl(url);
+
+        // TODO: Add error if not connected to a voice Channel
+        if (this.voiceBot) {
+          this.voiceBot.playStream(stream);Fix this context
+        }
+      } catch(e){ throw e; }
     }
 
     onReady(config) {
@@ -45,7 +48,9 @@
       let musicChannel = client.channels.find(function(channel) {
         return channel.name === config.channelStream && channel.type === "voice"
       });
-      musicChannel.join().then(this.channelStreamJoined);
+      musicChannel.join().then((voiceConnection) =>
+        this.channelStreamJoined(voiceConnection)
+      );
     }
 
     onMessage(message) {
@@ -73,17 +78,17 @@
       this.voiceBot = voiceConnection;
       log.debug("Connected on channel", "\"" + voiceConnection.channel.name + "\"");
 
-      const dispatcher = voiceConnection.playFile("/home/liomka/music/japan.mp3");
-
-      dispatcher.on("start", function() {
-        log.debug("Start playing");
-        client.user.speaking = true;
-      });
-
-      dispatcher.on("end", function() {
-        log.debug("End playing");
-        client.user.speaking = false;
-      });
+      // const dispatcher = voiceConnection.playFile("/home/liomka/music/japan.mp3");
+      //
+      // dispatcher.on("start", function() {
+      //   log.debug("Start playing");
+      //   client.user.speaking = true;
+      // });
+      //
+      // dispatcher.on("end", function() {
+      //   log.debug("End playing");
+      //   client.user.speaking = false;
+      // });
     }
   }
 
