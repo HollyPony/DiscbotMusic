@@ -1,6 +1,7 @@
 (function() {
   "use strict";
 
+  const ytdl = require("ytdl-core");
   const Discord = require("discord.js");
   const client = new Discord.Client();
 
@@ -10,11 +11,12 @@
     constructor(config) {
       let vm = this;
       this.config = config;
+      this.voiceBot = undefined;
 
       log.prefix(config.botName);
 
       client.on("ready", () => vm.onReady(config));
-      client.on("message", vm.onMessage);
+      client.on("message", (message) => vm.onMessage(message));
       client.on("voiceStateUpdate", vm.onVoiceStateUpdate);
     }
 
@@ -24,6 +26,16 @@
 
     stop() {
       return client.destroy();
+    }
+
+    playYoutube(url) {
+      log.debug(url);
+      let stream = ytdl(url);
+
+      // TODO: Add error if not connected to a voice Channel
+      if (this.voiceBot) {
+        this.voiceBot.playStream(stream);
+      }
     }
 
     onReady(config) {
@@ -38,6 +50,10 @@
 
     onMessage(message) {
       if (client.user.id === message.author.id) return;
+
+      if (message.content.startsWith("yt")) {
+        this.playYoutube(message.content.split(" ")[1]);
+      }
 
       if (message.content === "Hello") {
         message.channel.sendMessage("Hello !");
@@ -54,6 +70,7 @@
     }
 
     channelStreamJoined(voiceConnection) {
+      this.voiceBot = voiceConnection;
       log.debug("Connected on channel", "\"" + voiceConnection.channel.name + "\"");
 
       const dispatcher = voiceConnection.playFile("/home/liomka/music/japan.mp3");
