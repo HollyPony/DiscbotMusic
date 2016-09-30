@@ -9,35 +9,31 @@
   class Bot {
     constructor(config) {
       let vm = this;
-      this.conf = config;
+      this.config = config;
 
       log.prefix(config.botName);
 
-      client.on("ready", function() {
-        log.debug("Started");
-        client.user.setUsername(config.botName);
-
-        let musicChannel = client.channels.find(function(channel) {
-          return channel.name === config.channelStream && channel.type === "voice"
-        });
-        musicChannel.join().then(vm.channelStreamJoined);
-      });
-
+      client.on("ready", () => vm.onReady(config));
       client.on("message", vm.onMessage);
-
-      client.on("voiceStateUpdate", (oldMemeber, newMember) => {
-        if (newMember.user.id === client.user.id && newMember.mute) {
-          newMember.setMute(false);
-        }
-      });
+      client.on("voiceStateUpdate", vm.onVoiceStateUpdate);
     }
 
     start() {
-      return client.login(this.conf.discordToken);
+      return client.login(this.config.discordToken);
     }
 
     stop() {
       return client.destroy();
+    }
+
+    onReady(config) {
+      log.debug("Started");
+      client.user.setUsername(config.botName);
+
+      let musicChannel = client.channels.find(function(channel) {
+        return channel.name === config.channelStream && channel.type === "voice"
+      });
+      musicChannel.join().then(this.channelStreamJoined);
     }
 
     onMessage(message) {
@@ -48,6 +44,12 @@
       }
       if (message.content === "ping") {
         message.reply("pong");
+      }
+    }
+
+    onVoiceStateUpdate(oldMemeber, newMember) {
+      if (newMember.user.id === client.user.id && newMember.mute) {
+        newMember.setMute(false);
       }
     }
 
