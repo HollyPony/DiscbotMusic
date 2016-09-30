@@ -31,7 +31,7 @@
     }
 
     playYoutube(url) {
-      try {
+      try { // https://www.youtube.com/watch?v=GgwPQpE7qO8&
         let stream = ytdl(url);
 
         // TODO: Add error if not connected to a voice Channel
@@ -39,6 +39,37 @@
           this.voiceBot.playStream(stream);
         }
       } catch(e){ throw e; }
+    }
+
+    manageDispatcher(command) {
+      if (command === "start") {
+        this.streamDispather = this.voiceBot.playFile("/home/liomka/music/japan.mp3");
+
+        this.streamDispather.on("start", function() {
+          log.debug("Start playing");
+          client.user.speaking = true;
+        });
+
+        this.streamDispather.on("end", function() {
+          log.debug("End playing");
+          client.user.speaking = false;
+        });
+      }
+
+      if (this.streamDispather) {
+        if (command === "play") {
+          this.streamDispather.resume();
+          client.user.speaking = true;
+        } else if (command === "pause") {
+          this.streamDispather.pause();
+          client.user.speaking = false;
+        } else if (command === "stop") {
+          this.streamDispather.end();
+          client.user.speaking = false;
+        } else if (command === "next") {
+        } else if (command === "name") {
+        }
+      }
     }
 
     // ----------------------------------------------------------------------------------------------------------------
@@ -59,18 +90,18 @@
     onMessage(message) {
       if (client.user.id === message.author.id) return;
 
-      if (message.content.startsWith(""))
-
-      if (message.content.startsWith("yt")) {
-        this.playYoutube(message.content.split(" ")[1]);
+      if (message.content.startsWith(this.config.botPrefix)) {
+        this.manageDispatcher(message.content.substr(this.config.botPrefix.length + 1));
+        message.delete();
       }
 
-      if (message.content === "Hello") {
-        message.channel.sendMessage("Hello !");
+      if (message.content === "what is it ?") {
+        message.channel.sendMessage("qsdf");
       }
-      if (message.content === "ping") {
-        message.reply("pong");
-      }
+
+      // if (message.content.startsWith("yt")) {
+      //   this.playYoutube(message.content.substr("yt" + 1));
+      // }
     }
 
     onVoiceStateUpdate(oldMemeber, newMember) {
@@ -82,6 +113,7 @@
     channelStreamJoined(voiceConnection) {
       this.voiceBot = voiceConnection;
       log.debug("Connected on channel", "\"" + voiceConnection.channel.name + "\"");
+      client.user.speaking = false;
     }
   }
 
