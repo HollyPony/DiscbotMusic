@@ -1,4 +1,4 @@
-(function() {
+(() => {
   "use strict";
 
   const ytdl = require("ytdl-core");
@@ -45,7 +45,6 @@
     }
 
     manageDispatcher(message) {
-
       let command = message.content.substr(this.config.botPrefix.length + 1);
 
       if (command.startsWith("help")) {
@@ -63,8 +62,12 @@
           message.channel.sendMessage(playlists);
         } else if (subCmd.startsWith("select")) {
           let playlist = subCmd.substr("select".length + 1);
-          this.currentPlaylist = Playlists.getPlaylist(playlist);
-          message.channel.sendMessage("Current playlist switched to " + this.currentPlaylist.getName());
+          try {
+            this.currentPlaylist = Playlists.getPlaylist(playlist);
+            message.channel.sendMessage("Current playlist switched to **" + this.currentPlaylist.getName() + "**");
+          } catch(e) {
+            message.channel.sendMessage("Playlist **" + playlist + "** not found");
+          }
         } else if (subCmd.startsWith("current")) {
           message.channel.sendMessage("Current playlist is " + this.currentPlaylist.getName());
         } else {
@@ -121,10 +124,10 @@
     // EVENTS
     // ----------------------------------------------------------------------------------------------------------------
     onReady(config) {
-      log.debug("Started");
+      log.debug("Bot ready");
       client.user.setUsername(config.botName);
 
-      let musicChannel = client.channels.find(function(channel) {
+      let musicChannel = client.channels.find(channel => {
         return channel.name === config.channelStream && channel.type === "voice"
       });
       musicChannel.join().then((voiceConnection) =>

@@ -7,9 +7,9 @@
 
   const Playlist = require("./Playlist");
 
-  const getPlaylists = function() {
+  const getPlaylists = () => {
     let playlists = [];
-    fs.readdirSync("playlists").forEach(function (file) {
+    fs.readdirSync("playlists").forEach(file => {
       if (file.endsWith(".json")) {
         playlists.push(file);
       }
@@ -21,7 +21,7 @@
     return playlists;
   };
 
-  const getPlaylist = function(name) {
+  const getPlaylist = (name) => {
     return new Playlist(name);
   };
 
