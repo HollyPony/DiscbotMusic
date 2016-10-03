@@ -31,7 +31,7 @@
     }
 
     playYoutube(url) {
-      try { // https://www.youtube.com/watch?v=GgwPQpE7qO8&
+      try {
         let stream = ytdl(url);
 
         // TODO: Add error if not connected to a voice Channel
