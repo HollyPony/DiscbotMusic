@@ -7,6 +7,8 @@
 
   const log = new (require("./utils/logger"))("Bot.js");
 
+  const Playlists = require("./Playlists");
+
   class Bot {
     constructor(config) {
       let vm = this;
@@ -14,6 +16,7 @@
       this.config = config;
       this.streamDispather = undefined;
       this.voiceBot = undefined;
+      this.currentPlaylist = undefined;
 
       log.prefix(config.botName);
 
@@ -41,34 +44,76 @@
       } catch(e){ throw e; }
     }
 
-    manageDispatcher(command) {
-      if (command === "start") {
-        this.streamDispather = this.voiceBot.playFile("/home/liomka/music/japan.mp3");
+    manageDispatcher(message) {
 
-        this.streamDispather.on("start", function() {
-          log.debug("Start playing");
-          client.user.speaking = true;
-        });
+      let command = message.content.substr(this.config.botPrefix.length + 1);
 
-        this.streamDispather.on("end", function() {
-          log.debug("End playing");
-          client.user.speaking = false;
-        });
-      }
+      if (command.startsWith("help")) {
+        message.channel.sendMessage("TODO Write help");
 
-      if (this.streamDispather) {
-        if (command === "play") {
-          this.streamDispather.resume();
-          client.user.speaking = true;
-        } else if (command === "pause") {
-          this.streamDispather.pause();
-          client.user.speaking = false;
-        } else if (command === "stop") {
-          this.streamDispather.end();
-          client.user.speaking = false;
-        } else if (command === "next") {
-        } else if (command === "name") {
+      } else if (command.startsWith("playlist")) {
+        let subCmd = command.substr("playlist".length + 1);
+        if (subCmd.startsWith("ls")) {
+          let playlists = "";
+          Playlists.getPlaylists().forEach(playlist => {
+            playlists += "- " + playlist.slice(0, -4) + "\n";
+          });
+          playlists = playlists.slice(0, -2);
+          message.channel.sendMessage("Playlist available :");
+          message.channel.sendMessage(playlists);
+        } else if (subCmd.startsWith("select")) {
+          let playlist = subCmd.substr("select".length + 1);
+          this.currentPlaylist = Playlists.getPlaylist(playlist);
+          message.channel.sendMessage("Current playlist switched to " + this.currentPlaylist.getName());
+        } else if (subCmd.startsWith("current")) {
+          message.channel.sendMessage("Current playlist is " + this.currentPlaylist.getName());
+        } else {
+          message.channel.sendMessage("" +
+            "- **playlist ls**: List available playlists\n" +
+            "- **playlist select [NAME]**: Select a playlist as current\n" +
+            "- **playlist help**: Display this help");
         }
+
+      } else if (this.currentPlaylist) {
+
+        if (command === "start") {
+          this.streamDispather = this.voiceBot.playFile(this.currentPlaylist.next());
+
+          this.streamDispather.on("start", () => {
+            log.debug("Start playing");
+            client.user.speaking = true;
+          });
+
+          this.streamDispather.on("end", () => {
+            log.debug("End playing");
+            client.user.speaking = false;
+          });
+        }
+
+        if (this.streamDispather) {
+          if (command === "play") {
+            log.debug("Resume sound");
+            this.streamDispather.resume();
+            client.user.speaking = true;
+          } else if (command === "pause") {
+            log.debug("Pause sound");
+            this.streamDispather.pause();
+            client.user.speaking = false;
+          } else if (command === "stop") {
+            log.debug("Stop sound");
+            this.streamDispather.end();
+            client.user.speaking = false;
+          } else if (command === "next") {
+            log.debug("Next sound");
+            this.streamDispather = this.voiceBot.playFile(this.currentPlaylist.next());
+          } else if (command === "name") {
+            message.reply(this.currentPlaylist.getCurrent().name);
+          } else if (command === "infos") {
+            message.reply(JSON.stringify(this.currentPlaylist.getCurrent()));
+          }
+        }
+      } else {
+        message.reply("There is no selected playlist. Type " + config.botPrefix + " playlist help");
       }
     }
 
@@ -91,12 +136,8 @@
       if (client.user.id === message.author.id) return;
 
       if (message.content.startsWith(this.config.botPrefix)) {
-        this.manageDispatcher(message.content.substr(this.config.botPrefix.length + 1));
+        this.manageDispatcher(message);
         message.delete();
-      }
-
-      if (message.content === "what is it ?") {
-        message.channel.sendMessage("qsdf");
       }
 
       // if (message.content.startsWith("yt")) {

@@ -15,5 +15,7 @@
   config.channelBlindTest = jsonConf && jsonConf.channelBlindTest;
   config.discordToken = jsonConf && jsonConf.discordToken;
 
+  config.playlists = jsonConf && jsonConf.playlists || [];
+
   module.exports = config;
 })();
