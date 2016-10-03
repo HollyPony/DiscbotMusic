@@ -34,14 +34,10 @@
     }
 
     playYoutube(url) {
-      try {
-        let stream = ytdl(url);
-
-        // TODO: Add error if not connected to a voice Channel
-        if (this.voiceBot) {
-          this.voiceBot.playStream(stream);
-        }
-      } catch(e){ throw e; }
+      let stream = ytdl(url);
+      if (this.voiceBot) {
+        this.voiceBot.playStream(stream);
+      }
     }
 
     manageDispatcher(message) {
@@ -65,7 +61,7 @@
           try {
             this.currentPlaylist = Playlists.getPlaylist(playlist);
             message.channel.sendMessage("Current playlist switched to **" + this.currentPlaylist.getName() + "**");
-          } catch(e) {
+          } catch (e) {
             message.channel.sendMessage("Playlist **" + playlist + "** not found");
           }
         } else if (subCmd.startsWith("current")) {
@@ -75,6 +71,15 @@
             "- **playlist ls**: List available playlists\n" +
             "- **playlist select [NAME]**: Select a playlist as current\n" +
             "- **playlist help**: Display this help");
+        }
+
+      } else if (command.startsWith("yt")) {
+        let youtubeUrl = command.substr("yt" + 1);
+        try {
+          this.playYoutube(youtubeUrl);
+        } catch (e) {
+          message.reply("Cannot open youtube link: " + youtubeUrl);
+          log.debug(e);
         }
 
       } else if (this.currentPlaylist) {
@@ -116,7 +121,7 @@
           }
         }
       } else {
-        message.reply("There is no selected playlist. Type " + config.botPrefix + " playlist help");
+        message.reply("There is no selected playlist. Type " + this.config.botPrefix + " playlist help");
       }
     }
 
@@ -142,10 +147,6 @@
         this.manageDispatcher(message);
         message.delete();
       }
-
-      // if (message.content.startsWith("yt")) {
-      //   this.playYoutube(message.content.substr("yt" + 1));
-      // }
     }
 
     onVoiceStateUpdate(oldMemeber, newMember) {
