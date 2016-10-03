@@ -26,7 +26,7 @@
     }
 
     start() {
-      return client.login(this.config.discordToken);
+      return client.login(this.config.botToken);
     }
 
     stop() {

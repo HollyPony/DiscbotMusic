@@ -10,10 +10,10 @@
 
   config.botName = jsonConf && jsonConf.botName || "DiscordbotMusic";
   config.botPrefix = jsonConf && jsonConf.botPrefix;
+  config.botToken = jsonConf && jsonConf.botToken;
   config.channelStream = jsonConf && jsonConf.channelStream;
   config.channelAdmin = jsonConf && jsonConf.channelAdmin;
   config.channelBlindTest = jsonConf && jsonConf.channelBlindTest;
-  config.discordToken = jsonConf && jsonConf.discordToken;
 
   config.playlists = jsonConf && jsonConf.playlists || [];
 
