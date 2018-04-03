@@ -1,4 +1,6 @@
 # DiscbotMusic
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/HollyPony/DiscbotMusic.svg)](https://greenkeeper.io/)
 Musical Discord Bot for linux, with Js.
 
 ## Requirements
