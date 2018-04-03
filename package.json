@@ -6,7 +6,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^9.3.0",
-    "ytdl-core": "^0.7.18"
+    "discord.js": "^11.3.2",
+    "ytdl-core": "^0.20.2"
   }
 }
